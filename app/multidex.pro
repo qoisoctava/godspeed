@@ -1,3 +1,0 @@
--keep class **Test { *; }
--keep class androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner { *; }
--keep class androidx.test.core.app.InstrumentationActivityInvoker { *; }
