@@ -255,7 +255,12 @@ class SpeedListenerService: LifecycleService() {
             startForeground(notificationId, initialNotification)
         }
 
-        registerReceiver(stopBroadcastReceiver, stopBroadcastReceiver.intentFilter)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) { // Android 14
+            registerReceiver(stopBroadcastReceiver, stopBroadcastReceiver.intentFilter,
+                Context.RECEIVER_NOT_EXPORTED)
+        } else {
+            registerReceiver(stopBroadcastReceiver, stopBroadcastReceiver.intentFilter)
+        }
         speedListener.start()
         satelliteCountListener.start()
 
