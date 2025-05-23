@@ -1,19 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.HudFragment"
-
-    android:keepScreenOn="true"
-    android:id="@+id/speed"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:gravity="center"
+    android:keepScreenOn="true">
 
-    tools:text="299"
-    app:autoSizeTextType="uniform"
-    app:autoSizeMaxTextSize="600dp"
-    android:lines="1"
-    app:fontFamily="@font/lets_go_digital_regular"
-    />
+    <TextView
+        android:id="@+id/elevation_hud"
+        android:layout_width="186dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        tools:text="↗ 5%" />
+
+    <TextView
+        android:id="@+id/speed"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        tools:text="299"
+        app:autoSizeTextType="uniform"
+        app:autoSizeMaxTextSize="600dp"
+        android:lines="1"
+        app:fontFamily="@font/lets_go_digital_regular" />
+
+</LinearLayout>
