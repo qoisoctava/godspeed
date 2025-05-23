@@ -1,18 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.AppCompatTextView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-
-    android:id="@+id/speed"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
     android:gravity="center"
+    android:background="@android:color/black"
+    android:padding="8dp">
 
-    android:lines="1"
-    tools:text="299"
+    <TextView
+        android:id="@+id/elevation_pip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="4dp"
+        tools:text="↗ 5%" />
 
-    app:autoSizeTextType="uniform"
-    app:autoSizeMaxTextSize="600dp"
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/speed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:lines="1"
+        android:textColor="@android:color/white"
+        tools:text="299"
+        app:autoSizeTextType="uniform"
+        app:autoSizeMaxTextSize="600dp"
+        app:fontFamily="@font/lets_go_digital_regular" />
 
-    app:fontFamily="@font/lets_go_digital_regular" />
+</LinearLayout>
