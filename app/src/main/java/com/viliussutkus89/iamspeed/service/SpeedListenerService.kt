@@ -40,6 +40,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import androidx.test.espresso.IdlingResource
+import com.viliussutkus89.iamspeed.AppSettings
 import com.viliussutkus89.iamspeed.R
 import com.viliussutkus89.iamspeed.ui.IamSpeedActivity
 import com.viliussutkus89.iamspeed.ui.Pip
@@ -59,6 +60,7 @@ class SpeedListenerService: LifecycleService() {
 
         val speed: LiveData<SpeedEntry?> get() = SpeedListener.speed
         val satelliteCount: LiveData<SatelliteCount?> get() = SatelliteCountListener.satelliteCount
+        val elevationData: LiveData<ElevationData?> get() = ElevationListener.elevationData
 
         private const val START_INTENT_ACTION = "START"
         @MainThread
@@ -216,6 +218,7 @@ class SpeedListenerService: LifecycleService() {
     private val sharedPreferences get() = PreferenceManager.getDefaultSharedPreferences(this)
     private val speedListener by lazy { SpeedListener(locationManager, executor, sharedPreferences) }
     private val satelliteCountListener by lazy { SatelliteCountListener(locationManager, executor) }
+    private val elevationListener by lazy { ElevationListener(this) }
 
     private var pip: Pip? = null
 
@@ -227,7 +230,7 @@ class SpeedListenerService: LifecycleService() {
                 STOP_COUNTING_SATELLITES -> satelliteCountListener.stop()
                 RESTART_COUNTING_SATELLITES -> satelliteCountListener.start()
                 PIP_INTENT_ACTION -> {
-                    pip = Pip(this, this, speed)
+                    pip = Pip(this, this, speed, elevationData)
                 }
 
                 PIP_CLOSE_INTENT_ACTION -> {
@@ -255,17 +258,22 @@ class SpeedListenerService: LifecycleService() {
             startForeground(notificationId, initialNotification)
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) { // Android 14
-            registerReceiver(stopBroadcastReceiver, stopBroadcastReceiver.intentFilter,
-                Context.RECEIVER_NOT_EXPORTED)
-        } else {
-            registerReceiver(stopBroadcastReceiver, stopBroadcastReceiver.intentFilter)
-        }
+        registerReceiver(stopBroadcastReceiver, stopBroadcastReceiver.intentFilter)
         speedListener.start()
         satelliteCountListener.start()
+        elevationListener.start()
 
         speed.observe(this) { speedEntry ->
             notificationManagerCompat.notify(notificationId, getNotification(speedEntry))
+            // Update elevation listener with current speed
+            speedEntry?.let { entry ->
+                val speedMs = when (AppSettings.get(sharedPreferences, AppSettings.speedUnit)) {
+                    "kmh" -> entry.speedInt / 3.6f
+                    "mph" -> entry.speedInt / 2.237f
+                    else -> entry.speedInt.toFloat()
+                }
+                elevationListener.updateSpeed(speedMs)
+            }
         }
 
         started_.value = true
@@ -280,6 +288,7 @@ class SpeedListenerService: LifecycleService() {
         unregisterReceiver(stopBroadcastReceiver)
         speedListener.stop()
         satelliteCountListener.stop()
+        elevationListener.stop()
         executor.shutdownNow()
         notificationManagerCompat.cancel(notificationId)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

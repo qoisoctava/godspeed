@@ -1,4 +1,4 @@
-# [I am Speed](https://www.viliusSutkus89.com/i-am-speed)
+# [Based on "I am Speed"](https://www.viliusSutkus89.com/i-am-speed)
 
 Android speedometer app with Heads-Up Display and Picture-in-Picture modes
 
